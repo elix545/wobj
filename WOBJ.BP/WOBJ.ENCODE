@@ -1,0 +1,43 @@
+SUBROUTINE WOBJ.ENCODE(IN.STR,OUT.STR)
+       ***
+       * THIS PROGRAM WILL CONVERT ALL BAD CHARACTERS TO AN ESCAPED CHARACTER
+       ***
+       *OPEN 'RESULT.FILE' TO RFILE ELSE STOP
+       * WE NEED TO ENCODE
+       * " = \"   (34)
+       * \ = \\    (92)
+       * / = \/
+       * CHAR(7) = \b
+       * CHAR(13) = \r
+       * char(10) = \n
+       * char(12) = \f
+       * char(9)  = \t
+       OUT.STR=''
+       L=LEN(IN.STR)
+       CONVERT CHAR(254) TO CHAR(10) IN IN.STR; * LETS SWITCH 254 TO CR BE DEFAULT
+       FOR X=1 TO L
+          C=IN.STR[X,1]
+          SEQ.C=SEQ(C)
+          ENCODE=0
+          IF SEQ.C < 32 THEN ENCODE=1; * BELOW SPACE
+          *IF SEQ.C > 32 AND SEQ.C < 48 THEN ENCODE=1; * LETS ENCODE ALL OF THIS !@$%^&*()
+          IF SEQ.C=34 THEN ENCODE=1
+          IF SEQ.C=92 THEN ENCODE=1
+          IF SEQ.C=47 THEN ENCODE=1
+          IF SEQ.C > 122 THEN ENCODE = 1; * LETS ENCODE ALL THE HIGH ENTRIES
+          *IF SEQ.C >= 91 AND SEQ.C <= 96 THEN ENCODE=1
+          IF ENCODE THEN
+             BEGIN CASE
+                CASE SEQ.C=7; OUT.STR='\b'
+                CASE C='\'; OUT.STR:='\\'
+                CASE C='/'; OUT.STR:='\/'
+                CASE SEQ.C=10; OUT.STR:='\n'
+                CASE SEQ.C=13; OUT.STR:='\r'
+                CASE SEQ.C=12; OUT.STR:='\f'
+                CASE 1;  OUT.STR:='\u00':OCONV(C,'MX')
+             END CASE
+          END ELSE
+             OUT.STR=OUT.STR:C
+          END
+       NEXT X
+       RETURN
