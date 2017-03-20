@@ -25,17 +25,17 @@ SUBROUTINE WOBJ.ENCODE(IN.STR,OUT.STR)
           *IF SEQ.C > 32 AND SEQ.C < 48 THEN ENCODE=1; * LETS ENCODE ALL OF THIS !@$%^&*()
           IF SEQ.C=34 THEN ENCODE=1
           IF SEQ.C=92 THEN ENCODE=1
-         * IF SEQ.C=47 THEN ENCODE=1
+          IF SEQ.C=47 THEN ENCODE=1
           IF SEQ.C > 122 THEN ENCODE = 1; * LETS ENCODE ALL THE HIGH ENTRIES
           *IF SEQ.C >= 91 AND SEQ.C <= 96 THEN ENCODE=1
           IF ENCODE THEN
              BEGIN CASE
                 CASE SEQ.C=7; OUT.STR='\b'
                 CASE C='\'; OUT.STR:='\\'
-                *CASE C='/'; OUT.STR:='\/'
+                CASE C='/'; OUT.STR:='\/'
                 CASE SEQ.C=10
                   OUT.STR:='\n'
-                  IF CROVERRIDE THEN OUT.STR:=NL
+                  IF PRETTIFY THEN OUT.STR:=NL
                 CASE SEQ.C=13; OUT.STR:='\r'
                 CASE SEQ.C=12; OUT.STR:='\f'
                 CASE 1;  OUT.STR:='\u00':OCONV(C,'MX')
